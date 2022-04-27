@@ -35,7 +35,7 @@ END
 service cron restart >/dev/null 2>&1
 service cron reload >/dev/null 2>&1
 sleep 1
-echo -e "${green}Autokill-Vmess Started${NC}"
+echo -e "${green}Autokill-VLess Started${NC}"
 exit 0
 fi
 }
