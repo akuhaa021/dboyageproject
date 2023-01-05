@@ -89,7 +89,7 @@ NUMBER_OF_CLIENTS=$(grep -c -E "^#& " "/etc/xray/config.json")
 	echo "Select the existing client you want to view"
 	echo " Press CTRL+C to return"
 	echo -e "==============================="
-	grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2-3 | nl -s ') '
+	grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2-3 | nl -s ' | uniq) '
 	until [[ ${CLIENT_NUMBER} -ge 1 && ${CLIENT_NUMBER} -le ${NUMBER_OF_CLIENTS} ]]; do
 		if [[ ${CLIENT_NUMBER} == '1' ]]; then
 			read -rp "Select one client [1]: " CLIENT_NUMBER
@@ -132,9 +132,9 @@ patchtls=CF-RAY%3Ahttp%3A//${sni}/vlessws
 patchnontls=/vlessws
 patchyes=CF-RAY%3Ahttp%3A//${sni}/vlessws
 
-user=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2 | sed -n "${CLIENT_NUMBER}"p)
-exp=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 3 | sed -n "${CLIENT_NUMBER}"p)
-uuid=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 6 | sed -n "${CLIENT_NUMBER}"p)
+user=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2 | sed -n "${CLIENT_NUMBER}"p | uniq)
+exp=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 3 | sed -n "${CLIENT_NUMBER}"p | uniq)
+uuid=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 5 | sed -n "${CLIENT_NUMBER}"p | uniq)
 vlesslink1="vless://${uuid}@${address}:443?path=$patchtls&security=tls&encryption=none&type=ws&sni=$sni&host=${domain}#vless_${telko}_${user}"
 vlesslink2="vless://${uuid}@${address}:80?path=$patchnontls&encryption=none&host=$sni&type=ws#vless_${telko}_${user}"
 vlesslinkyes1="vless://${uuid}@${address}:80?path=$patchyes&security=tls&encryption=none&type=ws&host=${domain}#vless_${telko}_${user}"
