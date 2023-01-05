@@ -172,4 +172,3 @@ else
 	echo -e "${vlesslink1}"
 fi
 echo ""
-}
