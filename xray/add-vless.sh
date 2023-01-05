@@ -93,43 +93,43 @@ clear
 			v2ray-menu
 		fi
 	done
-x="ok"
 
-bugdigi=/root/.ctech/.kumbang/digi
-bugumo=/root/.ctech/.kumbang/umobile
-bugmaxis=/root/.ctech/.kumbang/maxis
-bugunifi=/root/.ctech/.kumbang/unifi
-bugyodoo=/root/.ctech/.kumbang/yodoo
-bugcelcom=/root/.ctech/.kumbang/celcom
-digi=$(sed -n '1 p' $bugdigi | cut -d' ' -f1)
-umo=$(sed -n '1 p' $bugumo | cut -d' ' -f1)
-maxis=$(sed -n '1 p' $bugmaxis | cut -d' ' -f1)
-unifi=$(sed -n '1 p' $bugunifi | cut -d' ' -f1)
-yodoo=$(sed -n '1 p' $bugyodoo | cut -d' ' -f1)
-celcom=$(sed -n '1 p' $bugcelcom | cut -d' ' -f1)
-
-while true $x != "ok"
-do
-echo "1. DIGI"
-echo "2. UMOBILE"
-echo "3. MAXIS"
-echo "4. UNIFI"
-echo "5. YODOO"
-echo "6. CELCOM"
-echo -ne "Input your choice : "; read list
-case "$list" in 
-   1) bug="$digi";break;;
-   2) bug="$umo";break;;
-   3) bug="$maxis";break;;
-   4) bug="$unifi";break;;
-   5) bug="$yodoo";break;;
-   6) bug="$celcom";break;;
-esac
-done
 
 echo -ne "Custom UUID [press enter for random] : "
 read uuid
 [[ -z $uuid ]] && uuid=$(cat /proc/sys/kernel/random/uuid)
+
+echo -e "   Please Choose Telco : "
+echo -e "   1. Digi"
+echo -e "   2. Umobile"
+echo -e "   3. Maxis : "
+echo -e "   4. Celcom : "
+echo -e "   5. Yes4G : "
+read -p "   Your Choise is : " telco
+
+if [[ $telco = "1" ]]; then
+	telko="Digi"
+	address="162.159.133.61"
+	sni=$domain
+elif [[ $telco = "2" ]]; then
+	telko="Umobile"
+	address=$MYIP
+	sni="pay-dcb.u.com.my"
+elif [[ $telco = "3" ]]; then
+	telko="Hotlink"
+	address="www.speedtest.net"
+	sni=$address
+elif [[ $telco = "4" ]]; then
+	telko="Celcom"
+	address="onlinepayment.celcom.com.my"
+	sni=$address
+elif [[ $telco = "5" ]]; then
+	telko="Yes4G"
+	address="cdn.who.int"
+	sni="who.int"
+else
+echo -e "   Invalid Choice. no bug added. add manual."
+fi
 
 read -p "Expired (days): " masaaktif
 exp=`date -d "$masaaktif days" +"%Y-%m-%d"`
@@ -137,29 +137,48 @@ sed -i '/#vlessWSTLS$/a\#& '"$user $exp"'\
 },{"id": "'""$uuid""'","email": "'""$user""'"' /etc/xray/config.json
 sed -i '/#vlessWS$/a\#& '"$user $exp"'\
 },{"id": "'""$uuid""'","email": "'""$user""'"' /etc/xray/config.json
-vlesslink1="vless://${uuid}@${domain}:$tls?path=/vlessws&security=tls&encryption=none&type=ws&sni=${bug}#${user}"
-vlesslink2="vless://${uuid}@${domain}:$none?path=/vlessws&encryption=none&type=ws&host=${bug}#${user}"
+
+patchtls=CF-RAY%3Ahttp%3A//${sni}/vlessws
+patchnontls=/vlessws
+patchyes=CF-RAY%3Ahttp%3A//${sni}/vlessws
+
+vlesslink1="vless://${uuid}@${address}:$tls?path=$patchtls&security=tls&encryption=none&type=ws&sni=$sni&host=${domain}#vless_${telko}_${user}"
+vlesslink2="vless://${uuid}@${address}:$none?path=$patchnontls&encryption=none&host=$sni&type=ws#vless_${telko}_${user}"
+vlesslinkyes1="vless://${uuid}@${address}:$none?path=$patchyes&security=tls&encryption=none&type=ws&host=${domain}#vless_${telko}_${user}"
+vlesslinkyes2="vless://${uuid}@${address}:$none?path=$patchnontls&encryption=none&host=${domain}&type=ws#vless_${telko}_${user}"
+
 systemctl restart xray
-clear
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
-echo -e "\E[44;1;39m      ⇱ Xray/Vless Account ⇲      \E[0m" | tee -a /etc/log-create-user.log
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
-echo -e "Remarks : ${user}" | tee -a /etc/log-create-user.log
-echo -e "Domain : ${domain}" | tee -a /etc/log-create-user.log
-echo -e "port TLS : $tls" | tee -a /etc/log-create-user.log
-echo -e "port none TLS : $none" | tee -a /etc/log-create-user.log
-echo -e "id : ${uuid}" | tee -a /etc/log-create-user.log
-echo -e "Encryption : none" | tee -a /etc/log-create-user.log
-echo -e "network : ws" | tee -a /etc/log-create-user.log
-echo -e "path : /vlessws" | tee -a /etc/log-create-user.log
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
-echo -e "Link TLS : ${vlesslink1}" | tee -a /etc/log-create-user.log
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
-echo -e "Link none TLS : ${vlesslink2}" | tee -a /etc/log-create-user.log
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
-echo -e "Expired On : $exp" | tee -a /etc/log-create-user.log
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
-echo "" | tee -a /etc/log-create-user.log
-read -n 1 -s -r -p "Press any key to back on menu"
+echo -e " ━━━━━━━━━━━━━━━━━"
+echo -e "XRay Vless Account Information"
+echo -e "━━━━━━━━━━━━━━━━━━"
+echo -e "Server : ${svname}"
+echo -e "Server IP: $MYIP"
+echo -e "Username: ${user}"
+echo -e "Telco: ${telko}"
+echo -e "Vless ID: ${uuid}"
+echo -e "Active Time: ${masaaktif} days"
+echo -e "Expiration date: $exp"
+echo ""
+echo -e "━━━━━━━━━━━━━━━━━━"
+echo -e "CLICK TO COPY"
+echo -e "━━━━━━━━━━━━━━━━━━"
+if [[ $telco = "1" ]]; then
+	echo -e "${vlesslink2}"
+elif [[ $telco = "2" ]]; then
+	echo -e "${vlesslink2}"
+elif [[ $telco = "3" ]]; then
+	echo -e "${vlesslink1}"
+elif [[ $telco = "4" ]]; then
+	echo -e "${vlesslink1}"
+elif [[ $telco = "5" ]]; then
+	echo -e "${vlesslinkyes2}"
+	echo -e "━━━━━━━━━━━━━━━━━━"
+	echo -e "${vlesslinkyes1}"
+else
+echo -e "${vlesslink2}"
+echo -e "━━━━━━━━━━━━━━━━━━"
+echo -e "${vlesslink1}"
+fi
+echo ""
 
 v2ray-menu
