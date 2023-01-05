@@ -22,8 +22,8 @@ BURIQ () {
 }
 
 MYIP=$(curl -sS ipv4.icanhazip.com)
+svname=$(curl -sS https://raw.githubusercontent.com/akuhaa021/reqAccess/main/ip | grep $MYIP | awk '{print $2}')
 Name=$(curl -sS https://raw.githubusercontent.com/akuhaa021/reqAccess/main/ip | grep $MYIP | awk '{print $2}')
-svname = $Name
 echo $Name > /usr/local/etc/.$Name.ini
 CekOne=$(cat /usr/local/etc/.$Name.ini)
 
