@@ -90,13 +90,12 @@ NUMBER_OF_CLIENTS=$(grep -c -E "^#& " "/etc/xray/config.json")
 	echo " Press CTRL+C to return"
 	echo -e "==============================="
 	grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2-3 | column -t | sort | uniq
-    	until [[ ${CLIENT_NUMBER} -ge 1 && ${CLIENT_NUMBER} -le ${NUMBER_OF_CLIENTS} ]]; do
-		if [[ ${CLIENT_NUMBER} == '1' ]]; then
-			read -rp "Select one client [1]: " CLIENT_NUMBER
-		else
-			read -rp "Select one client [1-${NUMBER_OF_CLIENTS}]: " CLIENT_NUMBER
-		fi
-	done
+    	red "tap enter to go back"
+    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+	read -rp "Input Username : " user
+    if [ -z $user ]; then
+    v2ray-menu
+    else
 echo -e "   Please Choose Telco : "
 echo -e "   1. Digi"
 echo -e "   2. Umobile"
