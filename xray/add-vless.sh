@@ -181,4 +181,3 @@ echo -e "${vlesslink1}"
 fi
 echo ""
 
-v2ray-menu
