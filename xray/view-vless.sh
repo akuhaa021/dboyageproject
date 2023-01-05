@@ -134,7 +134,7 @@ patchyes=CF-RAY%3Ahttp%3A//${sni}/vlessws
 
 user=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2 | sed -n "${CLIENT_NUMBER}"p)
 exp=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 3 | sed -n "${CLIENT_NUMBER}"p)
-uuid=$(grep -E "^#& $user" "/etc/xray/config.json" | cut -d ' ' -f 5 | sort | uniq)
+uuid=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 6 | sed -n "${CLIENT_NUMBER}"p)
 vlesslink1="vless://${uuid}@${address}:443?path=$patchtls&security=tls&encryption=none&type=ws&sni=$sni&host=${domain}#vless_${telko}_${user}"
 vlesslink2="vless://${uuid}@${address}:80?path=$patchnontls&encryption=none&host=$sni&type=ws#vless_${telko}_${user}"
 vlesslinkyes1="vless://${uuid}@${address}:80?path=$patchyes&security=tls&encryption=none&type=ws&host=${domain}#vless_${telko}_${user}"
