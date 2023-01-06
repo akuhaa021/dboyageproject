@@ -73,33 +73,23 @@ else
 domain=$IP
 fi
 
-tls="$(cat ~/log-install.txt | grep -w "Vless Ws Tls" | cut -d: -f2|sed 's/ //g')"
-none="$(cat ~/log-install.txt | grep -w "Vless Ws None Tls" | cut -d: -f2|sed 's/ //g')"
-NUMBER_OF_CLIENTS=$(grep -c -E "^#& " "/etc/xray/config.json")
-	if [[ ${NUMBER_OF_CLIENTS} == '0' ]]; then
-		clear
-		echo ""
-		echo "You have no existing clients!"
-		exit 1
-	fi
 
-	clear
-	echo ""
-	echo "SHOW USER XRAY VLESS WS"
-	echo "Select the existing client you want to view"
-	echo " Press CTRL+C to return"
-	echo -e "==============================="
-	grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2-3 | nl -s ') ' | column -t | sort | uniq
-    	red "tap enter to go back"
-    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-	read -rp "Input Username : " user
-echo -e "   Please Choose Telco : "
-echo -e "   1. Digi"
-echo -e "   2. Umobile"
-echo -e "   3. Maxis : "
-echo -e "   4. Celcom : "
-echo -e "   5. Yes4G : "
-read -p "   Your Choise is : " telco
+echo -e"\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+echo -e"\033[0;34m━━━━━━━CONFIG GENERATOR━━━━━━━━\033[0m"
+echo -e"\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+read -rp "Input Username : " user
+read -rp "Input UUID : " uuid
+echo -e "Please Choose Telco : "
+echo -e "1. Digi"
+echo -e "2. Umobile"
+echo -e "3. Maxis : "
+echo -e "4. Celcom : "
+echo -e "5. Yes4G : "
+read -p "Your Choise is : " telco
+echo -e "Config Type : " conftype
+echo -e "1. WS : "
+echo -e "2. XTLS : "
+read -p "Your Choise is : " conftype
 
 if [[ $telco = "1" ]]; then
 	telko="Digi"
@@ -124,18 +114,17 @@ elif [[ $telco = "5" ]]; then
 else
 echo -e "   Invalid Choice. no bug added. add manual."
 fi
-patchtls=CF-RAY%3Ahttp%3A//${sni}/vlessws
-patchnontls=/vlessws
-patchyes=CF-RAY%3Ahttp%3A//${sni}/vlessws
 
 
-user=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2 | sed -n "${CLIENT_NUMBER}"p | sort | uniq)
-exp=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 3 | sed -n "${CLIENT_NUMBER}"p | sort | uniq)
-uuid=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 5 | sed -n "${CLIENT_NUMBER}"p | sort | uniq)
+if [[ $conftype = "1" ]]; then
 vlesslink1="vless://${uuid}@${address}:443?path=$patchtls&security=tls&encryption=none&type=ws&sni=$sni&host=${domain}#vless_${telko}_${user}"
 vlesslink2="vless://${uuid}@${address}:80?path=$patchnontls&encryption=none&host=$sni&type=ws#vless_${telko}_${user}"
 vlesslinkyes1="vless://${uuid}@${address}:80?path=$patchyes&security=tls&encryption=none&type=ws&host=${domain}#vless_${telko}_${user}"
 vlesslinkyes2="vless://${uuid}@${address}:80?path=$patchnontls&encryption=none&host=${domain}&type=ws#vless_${telko}_${user}"
+else
+vlesslink2="vless://${uuid}@${address}:$xtls?security=xtls&encryption=none&headerType=none&type=tcp&flow=xtls-rprx-splice&sni=$sni#vless_XTLS_${telko}_${user}"
+fi
+
 clear
 
 echo -e "━━━━━━━━━━━━━━━━━━"
@@ -146,11 +135,11 @@ echo -e "Server IP: $MYIP"
 echo -e "Username: ${user}"
 echo -e "Telco: ${telko}"
 echo -e "Vless ID: ${uuid}"
-echo -e "Expiration date: $exp"
 echo -e "━━━━━━━━━━━━━━━━━━"
 echo -e "CLICK TO COPY"
 echo -e "━━━━━━━━━━━━━━━━━━"
-if [[ $telco = "1" ]]; then
+if [[ $conftype = "1" ]]; then
+	if [[ $telco = "1" ]]; then
 	echo -e "${vlesslink2}"
 elif [[ $telco = "2" ]]; then
 	echo -e "${vlesslink2}"
@@ -166,5 +155,8 @@ else
 	echo -e "${vlesslink2}"
 	echo -e "━━━━━━━━━━━━━━━━━━"
 	echo -e "${vlesslink1}"
+	fi
+else
+	echo -e "${vlesslink2}"
 fi
 echo ""
