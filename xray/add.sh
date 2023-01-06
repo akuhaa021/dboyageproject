@@ -22,7 +22,6 @@ BURIQ () {
 }
 
 MYIP=$(curl -sS ipv4.icanhazip.com)
-svname=$(curl -sS https://raw.githubusercontent.com/akuhaa021/reqAccess/main/ip | grep $MYIP | awk '{print $2}')
 Name=$(curl -sS https://raw.githubusercontent.com/akuhaa021/reqAccess/main/ip | grep $MYIP | awk '{print $2}')
 echo $Name > /usr/local/etc/.$Name.ini
 CekOne=$(cat /usr/local/etc/.$Name.ini)
@@ -96,62 +95,91 @@ clear
 			v2ray-menu
 		fi
 	done
+x="ok"
 
-echo -ne "   Custom UUID [press enter for random] : "
+while true $x != "ok"
+do
+echo "1. Vless xtls-rprx-direct"
+echo "2. Vless xtls-rprx-origin"
+echo -ne "Input your choice : "; read x
+case "$x" in 
+   1) xCho="xtls-rprx-direct";break;;
+   2) xCho="xtls-rprx-origin";break;;
+esac
+done
+
+bugdigi=/root/.ctech/.kumbang/digi
+bugumo=/root/.ctech/.kumbang/umobile
+bugmaxis=/root/.ctech/.kumbang/maxis
+bugunifi=/root/.ctech/.kumbang/unifi
+bugyodoo=/root/.ctech/.kumbang/yodoo
+bugcelcom=/root/.ctech/.kumbang/celcom
+digi=$(sed -n '1 p' $bugdigi | cut -d' ' -f1)
+umo=$(sed -n '1 p' $bugumo | cut -d' ' -f1)
+maxis=$(sed -n '1 p' $bugmaxis | cut -d' ' -f1)
+unifi=$(sed -n '1 p' $bugunifi | cut -d' ' -f1)
+yodoo=$(sed -n '1 p' $bugyodoo | cut -d' ' -f1)
+celcom=$(sed -n '1 p' $bugcelcom | cut -d' ' -f1)
+
+while true $x != "ok"
+do
+echo "1. DIGI"
+echo "2. UMOBILE"
+echo "3. MAXIS"
+echo "4. UNIFI"
+echo "5. YODOO"
+echo "6. CELCOM"
+echo -ne "Input your choice : "; read list
+case "$list" in 
+   1) bug="www.pokemon.com";break;;
+   2) bug="mm.net.my";break;;
+   3) bug="$maxis";break;;
+   4) bug="$unifi";break;;
+   5) bug="$yodoo";break;;
+   6) bug="$celcom";break;;
+esac
+done
+
+echo -ne "Custom UUID [press enter for random] : "
 read uuid
 [[ -z $uuid ]] && uuid=$(cat /proc/sys/kernel/random/uuid)
-echo -e "   Please Choose Telco : "
-echo -e "   1. Digi Pokemon Go"
-echo -e "   2. Umobile"
-echo -e "   3. MaxisTV : "
-echo -e "   4. Celcom : "
-echo -e "   5. Yes4G : "
-read -p "   Your Choise is : " telco
+read -p "Expired (days): " masaaktif
 
-if [[ $telco = "1" ]]; then
-	address="www.pokemon.com.${domain}"
-	sni="www.pokemon.com"
-	telko="DigiGo"
-elif [[ $telco = "2" ]]; then
-	address=$MYIP
-	sni="pay-dcb.u.com.my"
-	telko="Umobile"
-elif [[ $telco = "3" ]]; then
-	address=$domain
-	sni="sub.viu.com"
-	telko="MaxisTV"
-elif [[ $telco = "4" ]]; then
-	address="onlinepayment.celcom.com.my"
-	sni=$address
-	telko="Celcom"
-elif [[ $telco = "5" ]]; then
-	address="cdn.who.int"
-	sni="who.int"
-	telko="Yes"
-else
-echo -e "   Invalid Choice. no bug added. add manual."
-fi
+config=/root/.ctech/.kumbang/config
 
-read -p "   Expired (days) : " masaaktif
+echo "vless://${uuid}@${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp#vless_xtls_${svname}_${user}" >$config
+echo "vless://${uuid}@${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp&sni=${bug}#vless_xtls_${svname}_${user}" >>$config
+echo "vless://${uuid}@${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp&sni=${bug}#vless_xtls_${svname}_${user}" >>$config
 
-sts=$bug_addr2
-
+config=/root/.ctech/.kumbang/config
+add=$(sed -n '1 p' $config | cut -d' ' -f1)
+sni=$(sed -n '2 p' $config | cut -d' ' -f1)
+both=$(sed -n '3 p' $config | cut -d' ' -f1)
+while true $x != "ok"
+do
+echo "1. BUG AS ADDRESS"
+echo "2. BUG AS SNI/REQUEST HOST"
+echo "3. BUG AS BOTH"
+echo -ne "Input your choice : "; read jenisconf
+case "$jenisconf" in 
+   1) jenis="$add";break;;
+   2) jenis="$sni";break;;
+   3) jenis="$both";break;;
+esac
+done
 
 exp=`date -d "$masaaktif days" +"%Y-%m-%d"`
 sed -i '/#vlessXTLS$/a\#& '"$user $exp"'\
 },{"id": "'""$uuid""'","flow": "'""$xCho""'","email": "'""$user""'"' /usr/local/etc/xtls/config.json
 
-
-vlesslink1="vless://${uuid}@${address}:$xtls?security=xtls&encryption=none&headerType=none&type=tcp&flow=xtls-rprx-direct&sni=$sni#vless_XTLS_${telko}_${user}"
-vlesslink2="vless://${uuid}@${address}:$xtls?security=xtls&encryption=none&headerType=none&type=tcp&flow=xtls-rprx-splice&sni=$sni#vless_XTLS_${telko}_${user}"
-systemctl restart xray
+vlessTcpXtls="$jenis"
+systemctl restart xtls
 clear
 echo -e "━━━━━━━━━━━━━━━━━━"
 echo -e "XRay Vless Account Information"
 echo -e "━━━━━━━━━━━━━━━━━━"
 echo -e "Server : ${svname}-XTLS"
 echo -e "Server IP: $MYIP"
-echo -e "Telco : ${telko}"
 echo -e "Username: ${user}"
 echo -e "Vless ID: ${uuid}"
 echo -e "Active Time: ${masaaktif} days"
@@ -159,5 +187,8 @@ echo -e "Expiration date: $exp"
 echo -e "━━━━━━━━━━━━━━━━━━"
 echo -e "CLICK TO COPY"
 echo -e "━━━━━━━━━━━━━━━━━━"
-echo -e "${vlesslink2}"
+echo -e "$${vlessTcpXtls}"
 echo ""
+read -n 1 -s -r -p "Press any key to back on menu"
+
+v2ray-menu
