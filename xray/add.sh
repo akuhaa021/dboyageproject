@@ -22,6 +22,7 @@ BURIQ () {
 }
 
 MYIP=$(curl -sS ipv4.icanhazip.com)
+svname=$(curl -sS https://raw.githubusercontent.com/akuhaa021/reqAccess/main/ip | grep $MYIP | awk '{print $2}')
 Name=$(curl -sS https://raw.githubusercontent.com/akuhaa021/reqAccess/main/ip | grep $MYIP | awk '{print $2}')
 echo $Name > /usr/local/etc/.$Name.ini
 CekOne=$(cat /usr/local/etc/.$Name.ini)
@@ -108,86 +109,67 @@ case "$x" in
 esac
 done
 
-bugdigi=/root/.ctech/.kumbang/digi
-bugumo=/root/.ctech/.kumbang/umobile
-bugmaxis=/root/.ctech/.kumbang/maxis
-bugunifi=/root/.ctech/.kumbang/unifi
-bugyodoo=/root/.ctech/.kumbang/yodoo
-bugcelcom=/root/.ctech/.kumbang/celcom
-digi=$(sed -n '1 p' $bugdigi | cut -d' ' -f1)
-umo=$(sed -n '1 p' $bugumo | cut -d' ' -f1)
-maxis=$(sed -n '1 p' $bugmaxis | cut -d' ' -f1)
-unifi=$(sed -n '1 p' $bugunifi | cut -d' ' -f1)
-yodoo=$(sed -n '1 p' $bugyodoo | cut -d' ' -f1)
-celcom=$(sed -n '1 p' $bugcelcom | cut -d' ' -f1)
+echo -ne "   Custom UUID [press enter for random] : "
+read uuid
+[[ -z $uuid ]] && uuid=$(cat /proc/sys/kernel/random/uuid)
+echo -e "   Please Choose Telco : "
+echo -e "   1. Digi Pokemon Go"
+echo -e "   2. Umobile"
+echo -e "   3. MaxisTV : "
+echo -e "   4. Celcom : "
+echo -e "   5. Yes4G : "
+read -p "   Your Choise is : " telco
 
-while true $x != "ok"
-do
-echo "1. DIGI"
-echo "2. UMOBILE"
-echo "3. MAXIS"
-echo "4. UNIFI"
-echo "5. YODOO"
-echo "6. CELCOM"
-echo -ne "Input your choice : "; read list
-case "$list" in 
-   1) bug="$digi";break;;
-   2) bug="$umo";break;;
-   3) bug="$maxis";break;;
-   4) bug="$unifi";break;;
-   5) bug="$yodoo";break;;
-   6) bug="$celcom";break;;
-esac
-done
+if [[ $telco = "1" ]]; then
+	address="www.pokemon.com.${domain}"
+	sni="www.pokemon.com"
+	telko="DigiGo"
+elif [[ $telco = "2" ]]; then
+	address=$MYIP
+	sni="pay-dcb.u.com.my"
+	telko="Umobile"
+elif [[ $telco = "3" ]]; then
+	address=$domain
+	sni="sub.viu.com"
+	telko="MaxisTV"
+elif [[ $telco = "4" ]]; then
+	address="onlinepayment.celcom.com.my"
+	sni=$address
+	telko="Celcom"
+elif [[ $telco = "5" ]]; then
+	address="cdn.who.int"
+	sni="who.int"
+	telko="Yes"
+else
+echo -e "   Invalid Choice. no bug added. add manual."
+fi
 
-uuid=$(cat /proc/sys/kernel/random/uuid)
-read -p "Expired (days): " masaaktif
+read -p "   Expired (days) : " masaaktif
 
-config=/root/.ctech/.kumbang/config
+sts=$bug_addr2
 
-echo "vless://${uuid}@${bug}.${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp#${user}" >$config
-echo "vless://${uuid}@${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp&sni=${bug}#${user}" >>$config
-echo "vless://${uuid}@${bug}.${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp&sni=${bug}#${user}" >>$config
-
-config=/root/.ctech/.kumbang/config
-add=$(sed -n '1 p' $config | cut -d' ' -f1)
-sni=$(sed -n '2 p' $config | cut -d' ' -f1)
-both=$(sed -n '3 p' $config | cut -d' ' -f1)
-while true $x != "ok"
-do
-echo "1. BUG AS ADDRESS"
-echo "2. BUG AS SNI/REQUEST HOST"
-echo "3. BUG AS BOTH"
-echo -ne "Input your choice : "; read jenisconf
-case "$jenisconf" in 
-   1) jenis="$add";break;;
-   2) jenis="$sni";break;;
-   3) jenis="$both";break;;
-esac
-done
 
 exp=`date -d "$masaaktif days" +"%Y-%m-%d"`
 sed -i '/#vlessXTLS$/a\#& '"$user $exp"'\
 },{"id": "'""$uuid""'","flow": "'""$xCho""'","email": "'""$user""'"' /usr/local/etc/xtls/config.json
 
-vlessTcpXtls="$jenis"
-systemctl restart xtls
-clear
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
-echo -e "\E[44;1;39m       ⇱ Add VLess TCP XTLS ⇲      \E[0m" | tee -a /etc/log-create-user.log
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
-echo -e "Expired On : $exp" | tee -a /etc/log-create-user.log
-echo -e "Remarks : ${user}" | tee -a /etc/log-create-user.log
-echo -e "Domain : ${domain}" | tee -a /etc/log-create-user.log
-echo -e "Port : $tls" | tee -a /etc/log-create-user.log
-echo -e "Id : ${uuid}" | tee -a /etc/log-create-user.log
-echo -e "Encryption : none" | tee -a /etc/log-create-user.log
-echo -e "Network : tcp" | tee -a /etc/log-create-user.log
-echo -e "Flow : $xCho" | tee -a /etc/log-create-user.log
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
-echo -e "Link XTLS : ${vlessTcpXtls}" | tee -a /etc/log-create-user.log
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
-echo "" | tee -a /etc/log-create-user.log
-read -n 1 -s -r -p "Press any key to back on menu"
 
-v2ray-menu
+vlesslink1="vless://${uuid}@${address}:$xtls?security=xtls&encryption=none&headerType=none&type=tcp&flow=xtls-rprx-direct&sni=$sni#vless_XTLS_${telko}_${user}"
+vlesslink2="vless://${uuid}@${address}:$xtls?security=xtls&encryption=none&headerType=none&type=tcp&flow=xtls-rprx-splice&sni=$sni#vless_XTLS_${telko}_${user}"
+systemctl restart xray
+clear
+echo -e "━━━━━━━━━━━━━━━━━━"
+echo -e "XRay Vless Account Information"
+echo -e "━━━━━━━━━━━━━━━━━━"
+echo -e "Server : ${svname}-XTLS"
+echo -e "Server IP: $MYIP"
+echo -e "Telco : ${telko}"
+echo -e "Username: ${user}"
+echo -e "Vless ID: ${uuid}"
+echo -e "Active Time: ${masaaktif} days"
+echo -e "Expiration date: $exp"
+echo -e "━━━━━━━━━━━━━━━━━━"
+echo -e "CLICK TO COPY"
+echo -e "━━━━━━━━━━━━━━━━━━"
+echo -e "${vlesslink2}"
+echo ""
