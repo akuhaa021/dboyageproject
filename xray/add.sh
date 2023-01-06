@@ -22,6 +22,7 @@ BURIQ () {
 }
 
 MYIP=$(curl -sS ipv4.icanhazip.com)
+svname=$(curl -sS https://raw.githubusercontent.com/akuhaa021/reqAccess/main/ip | grep $MYIP | awk '{print $2}')
 Name=$(curl -sS https://raw.githubusercontent.com/akuhaa021/reqAccess/main/ip | grep $MYIP | awk '{print $2}')
 echo $Name > /usr/local/etc/.$Name.ini
 CekOne=$(cat /usr/local/etc/.$Name.ini)
@@ -131,8 +132,8 @@ echo "5. YODOO"
 echo "6. CELCOM"
 echo -ne "Input your choice : "; read list
 case "$list" in 
-   1) bug="$digi";break;;
-   2) bug="$umo";break;;
+   1) bug=$digi;telko="DigiGo";break;;
+   2) bug=$umo;telko="Umobile";break;;
    3) bug="$maxis";break;;
    4) bug="$unifi";break;;
    5) bug="$yodoo";break;;
@@ -140,14 +141,17 @@ case "$list" in
 esac
 done
 
-uuid=$(cat /proc/sys/kernel/random/uuid)
+echo -ne "Custom UUID [press enter for random] : "
+read uuid
+[[ -z $uuid ]] && uuid=$(cat /proc/sys/kernel/random/uuid)
 read -p "Expired (days): " masaaktif
+
 
 config=/root/.ctech/.kumbang/config
 
-echo "vless://${uuid}@${bug}.${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp#${user}" >$config
-echo "vless://${uuid}@${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp&sni=${bug}#${user}" >>$config
-echo "vless://${uuid}@${bug}.${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp&sni=${bug}#${user}" >>$config
+echo "vless://${uuid}@${MYIP}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp#vless_XTLS_${telko}_${user}" >$config
+echo "vless://${uuid}@${MYIP}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp&sni=${bug}#vless_XTLS_${telko}_${user}" >>$config
+echo "vless://${uuid}@${MYIP}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp&sni=${bug}#vless_XTLS_${telko}_${user}" >>$config
 
 config=/root/.ctech/.kumbang/config
 add=$(sed -n '1 p' $config | cut -d' ' -f1)
