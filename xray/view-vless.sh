@@ -79,6 +79,10 @@ echo -e"\033[0;34m━━━━━━━CONFIG GENERATOR━━━━━━━━\
 echo -e"\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 read -rp "Input Username : " user
 read -rp "Input UUID : " uuid
+echo -e "Config Type : "
+echo -e "1. WS : "
+echo -e "2. XTLS : "
+read -p "Your Choise is : " conftype
 echo -e "Please Choose Telco : "
 echo -e "1. Digi"
 echo -e "2. Umobile"
@@ -86,15 +90,18 @@ echo -e "3. Maxis : "
 echo -e "4. Celcom : "
 echo -e "5. Yes4G : "
 read -p "Your Choise is : " telco
-echo -e "Config Type : " conftype
-echo -e "1. WS : "
-echo -e "2. XTLS : "
-read -p "Your Choise is : " conftype
+
 
 if [[ $telco = "1" ]]; then
+	if [[ $conftype = "1" ]]; then
 	telko="Digi"
 	address="162.159.133.61"
 	sni=$domain
+	else
+	telko="DigiGo"
+	address=$MYIP
+	sni="www.pokemon.com"
+	fi
 elif [[ $telco = "2" ]]; then
 	telko="Umobile"
 	address=$MYIP
