@@ -187,7 +187,7 @@ echo -e "Expiration date: $exp"
 echo -e "━━━━━━━━━━━━━━━━━━"
 echo -e "CLICK TO COPY"
 echo -e "━━━━━━━━━━━━━━━━━━"
-echo -e "$${vlessTcpXtls}"
+echo -e "${vlessTcpXtls}"
 echo ""
 read -n 1 -s -r -p "Press any key to back on menu"
 
