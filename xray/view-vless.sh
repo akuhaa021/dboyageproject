@@ -131,6 +131,10 @@ patchtls=CF-RAY%3Ahttp%3A//${sni}/vlessws
 patchnontls=/vlessws
 patchyes=CF-RAY%3Ahttp%3A//${sni}/vlessws
 
+apani1=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 1 | sed -n "${CLIENT_NUMBER}"p | sort | uniq)
+apani2=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 4 | sed -n "${CLIENT_NUMBER}"p | sort | uniq)
+apani3=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 6 | sed -n "${CLIENT_NUMBER}"p | sort | uniq)
+apani4=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 7 | sed -n "${CLIENT_NUMBER}"p | sort | uniq)
 user=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2 | sed -n "${CLIENT_NUMBER}"p | sort | uniq)
 exp=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 3 | sed -n "${CLIENT_NUMBER}"p | sort | uniq)
 uuid=$(grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 5 | sed -n "${CLIENT_NUMBER}"p | sort | uniq)
@@ -140,6 +144,13 @@ vlesslinkyes1="vless://${uuid}@${address}:80?path=$patchyes&security=tls&encrypt
 vlesslinkyes2="vless://${uuid}@${address}:80?path=$patchnontls&encryption=none&host=${domain}&type=ws#vless_${telko}_${user}"
 clear
 
+echo -e "apani1 : ${apani1}"
+echo -e "User : ${user}"
+echo -e "Exp : ${exp}"
+echo -e "apani2 : ${apani1}"
+echo -e "uuid : ${uuid}"
+echo -e "apani3 : ${apani3}"
+echo -e "apani4 : ${apani4}"
 echo -e "━━━━━━━━━━━━━━━━━━"
 echo -e "XRay Vless Account Information"
 echo -e "━━━━━━━━━━━━━━━━━━"
