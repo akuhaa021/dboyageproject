@@ -93,10 +93,6 @@ NUMBER_OF_CLIENTS=$(grep -c -E "^#& " "/etc/xray/config.json")
     	red "tap enter to go back"
     echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 	read -rp "Input Username : " user
-    if [ -z $user ]; then
-    v2ray-menu
-    else
-    fi
 echo -e "   Please Choose Telco : "
 echo -e "   1. Digi"
 echo -e "   2. Umobile"
