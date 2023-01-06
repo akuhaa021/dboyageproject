@@ -106,16 +106,19 @@ NUMBER_OF_CLIENTS=$(grep -c -E "^#& " "/etc/xray/config.json")
     sed -i "/#& $user/c\#& $user $exp4" /etc/xray/config.json
     systemctl restart xray > /dev/null 2>&1
     clear
-    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
     echo " VLESS Account Was Successfully Renewed"
-    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
     echo " Server: ${svname}"
     echo " Server IP: $MYIP"
     echo " Username: $user"
     echo " Additional Time: $masaaktif days"
     echo " Expiration Date: $exp4"
-    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-    echo ""
+    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+    echo "Anda boleh terus menggunakan config lama."
+    echo "Tiada sebarang perubahan config, sekiranya config tidak berjalan atau hilang, sila maklumkan."
+    echo "Terima Kasih."
+    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
     read -n 1 -s -r -p "Press any key to back on menu"
     v2ray-menu
     fi
