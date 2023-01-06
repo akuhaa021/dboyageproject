@@ -96,18 +96,6 @@ clear
 			v2ray-menu
 		fi
 	done
-x="ok"
-
-while true $x != "ok"
-do
-echo "1. Vless xtls-rprx-direct"
-echo "2. Vless xtls-rprx-origin"
-echo -ne "Input your choice : "; read x
-case "$x" in 
-   1) xCho="xtls-rprx-direct";break;;
-   2) xCho="xtls-rprx-origin";break;;
-esac
-done
 
 echo -ne "   Custom UUID [press enter for random] : "
 read uuid
