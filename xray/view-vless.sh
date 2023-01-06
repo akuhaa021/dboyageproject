@@ -89,7 +89,7 @@ NUMBER_OF_CLIENTS=$(grep -c -E "^#& " "/etc/xray/config.json")
 	echo "Select the existing client you want to view"
 	echo " Press CTRL+C to return"
 	echo -e "==============================="
-	grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2-3 | column -t | sort | uniq
+	grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2-3 | nl -s | column -t | sort | uniq
     	red "tap enter to go back"
     echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 	read -rp "Input Username : " user
