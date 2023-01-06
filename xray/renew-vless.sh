@@ -97,7 +97,7 @@ NUMBER_OF_CLIENTS=$(grep -c -E "^#& " "/etc/xray/config.json")
     else
     read -p "Expired (days): " masaaktif
     exp=$(grep -wE "^#& $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
-    uuid=$(grep -wE "^#& $user" "/etc/xray/config.json" | cut -d ' ' -f 5 | sort | uniq)
+    uuid=$(grep -E "^#& $user" "/etc/xray/config.json" | cut -d ' ' -f 5 | sort | uniq)
     now=$(date +%Y-%m-%d)
     d1=$(date -d "$exp" +%s)
     d2=$(date -d "$now" +%s)
