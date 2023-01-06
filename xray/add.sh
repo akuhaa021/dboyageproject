@@ -131,8 +131,8 @@ echo "5. YODOO"
 echo "6. CELCOM"
 echo -ne "Input your choice : "; read list
 case "$list" in 
-   1) bug="www.pokemon.com";break;;
-   2) bug="mm.net.my";break;;
+   1) bug="$digi";break;;
+   2) bug="$umo";break;;
    3) bug="$maxis";break;;
    4) bug="$unifi";break;;
    5) bug="$yodoo";break;;
@@ -140,16 +140,14 @@ case "$list" in
 esac
 done
 
-echo -ne "Custom UUID [press enter for random] : "
-read uuid
-[[ -z $uuid ]] && uuid=$(cat /proc/sys/kernel/random/uuid)
+uuid=$(cat /proc/sys/kernel/random/uuid)
 read -p "Expired (days): " masaaktif
 
 config=/root/.ctech/.kumbang/config
 
-echo "vless://${uuid}@${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp#vless_xtls_${svname}_${user}" >$config
-echo "vless://${uuid}@${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp&sni=${bug}#vless_xtls_${svname}_${user}" >>$config
-echo "vless://${uuid}@${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp&sni=${bug}#vless_xtls_${svname}_${user}" >>$config
+echo "vless://${uuid}@${bug}.${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp#${user}" >$config
+echo "vless://${uuid}@${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp&sni=${bug}#${user}" >>$config
+echo "vless://${uuid}@${bug}.${domain}:$tls?path=/&security=xtls&encryption=none&flow=${xCho}&type=tcp&sni=${bug}#${user}" >>$config
 
 config=/root/.ctech/.kumbang/config
 add=$(sed -n '1 p' $config | cut -d' ' -f1)
@@ -175,20 +173,21 @@ sed -i '/#vlessXTLS$/a\#& '"$user $exp"'\
 vlessTcpXtls="$jenis"
 systemctl restart xtls
 clear
-echo -e "━━━━━━━━━━━━━━━━━━"
-echo -e "XRay Vless Account Information"
-echo -e "━━━━━━━━━━━━━━━━━━"
-echo -e "Server : ${svname}-XTLS"
-echo -e "Server IP: $MYIP"
-echo -e "Username: ${user}"
-echo -e "Vless ID: ${uuid}"
-echo -e "Active Time: ${masaaktif} days"
-echo -e "Expiration date: $exp"
-echo -e "━━━━━━━━━━━━━━━━━━"
-echo -e "CLICK TO COPY"
-echo -e "━━━━━━━━━━━━━━━━━━"
-echo -e "${vlessTcpXtls}"
-echo ""
+echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
+echo -e "\E[44;1;39m       ⇱ Add VLess TCP XTLS ⇲      \E[0m" | tee -a /etc/log-create-user.log
+echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
+echo -e "Expired On : $exp" | tee -a /etc/log-create-user.log
+echo -e "Remarks : ${user}" | tee -a /etc/log-create-user.log
+echo -e "Domain : ${domain}" | tee -a /etc/log-create-user.log
+echo -e "Port : $tls" | tee -a /etc/log-create-user.log
+echo -e "Id : ${uuid}" | tee -a /etc/log-create-user.log
+echo -e "Encryption : none" | tee -a /etc/log-create-user.log
+echo -e "Network : tcp" | tee -a /etc/log-create-user.log
+echo -e "Flow : $xCho" | tee -a /etc/log-create-user.log
+echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
+echo -e "Link XTLS : ${vlessTcpXtls}" | tee -a /etc/log-create-user.log
+echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m" | tee -a /etc/log-create-user.log
+echo "" | tee -a /etc/log-create-user.log
 read -n 1 -s -r -p "Press any key to back on menu"
 
 v2ray-menu
